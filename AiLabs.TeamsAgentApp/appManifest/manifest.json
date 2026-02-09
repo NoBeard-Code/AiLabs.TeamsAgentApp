@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "1.0.0",
+  "id": "1f68832a-05c0-4725-9f77-a7d590758a3a",
+  "developer": {
+    "name": "GDW Innovations",
+    "websiteUrl": "https://gdw-innovations.azurewebsites.net",
+    "privacyUrl": "https://gdw-innovations.azurewebsites.net/privacy",
+    "termsOfUseUrl": "https://gdw-innovations.azurewebsites.net/termsofuse"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "DefComm Dev Agent",
+    "full": "full name of DefComm Dev Agent"
+  },
+  "description": {
+    "short": "short description of DefComm Dev Agent",
+    "full": "full description of DefComm Dev Agent"
+  },
+  "accentColor": "#FFFFFF",
+  "copilotAgents": {
+    "customEngineAgents": [
+      {
+        "id": "1f68832a-05c0-4725-9f77-a7d590758a3a",
+        "type": "bot"
+      }
+    ]
+  },
+  "bots": [
+    {
+      "botId": "1f68832a-05c0-4725-9f77-a7d590758a3a",
+      "scopes": [
+        "personal",
+        "team",
+        "groupChat",
+        "copilot"
+      ],
+      "isNotificationOnly": false,
+      "supportsCalling": false,
+      "supportsVideo": false,
+      "supportsFiles": false
+    }
+  ],
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "https://36m8t70c-3999.euw.devtunnels.ms"
+  ]
+}
