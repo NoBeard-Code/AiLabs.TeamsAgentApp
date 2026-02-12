@@ -1,4 +1,4 @@
-using AiLabs.TeamsAgentApp.BusinessLogic;
+﻿using AiLabs.TeamsAgentApp.BusinessLogic;
 using AiLabs.TeamsAgentApp.Configuration;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.BotFramework;
@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddHttpClient();
+builder.Services.AddControllers();
 
 #if AGENTS
 
@@ -37,20 +38,67 @@ builder.Services.AddAgentAspNetAuthentication(builder.Configuration);
 // in a cluster of Agent instances.
 builder.Services.AddSingleton<IStorage, MemoryStorage>();
 
+var app = builder.Build();
+
 #elif TEAMS
 
-builder.Services.Configure<AgentsOptions>(builder.Configuration.GetSection("Agents"));
+//builder.Services.Configure<AgentsOptions>(builder.Configuration.GetSection("Agents"));
+
+#region single agent 
+
+var agents = builder.Configuration.GetSection("Agents").Get<List<AgentEntry>>()!;
+
+// Dictionaries to store per-agent services
+var adapterMap = new Dictionary<string, CloudAdapter>();
+var botFactoryMap = new Dictionary<string, Func<IBot>>();
+
+// ✔ Register bots BEFORE builder.Build()
+foreach (var agent in agents)
+{
+    //builder.Services.AddTransient(typeof(EndpointAgentBot),
+    //    sp => new EndpointAgentBot(agent.Name));
+
+    //builder.Services.AddSingleton<Func<string, IBot>>(sp => { return agentName => new EndpointAgentBot(agentName); });
+    botFactoryMap[agent.Name] = () => new EndpointAgentBot(agent.Name);
+}
+
+var app = builder.Build();
+
+// Register each agent's services
+foreach (var agent in agents)
+{
+    var logger = app.Services.GetRequiredService<ILogger<CloudAdapter>>();
+
+    var adapter = AdapterFactory.CreateAdapter(agent.AppId, agent.ClientSecret, agent.TenantId, logger);
+
+    //var isolatedConfig = new ConfigurationBuilder()
+    //    .AddInMemoryCollection(new Dictionary<string, string?>
+    //    {
+    //        ["MicrosoftAppId"] = agent.AppId,
+    //        ["MicrosoftAppPassword"] = agent.ClientSecret
+    //    })
+    //    .Build();
+
+    //var auth = new ConfigurationBotFrameworkAuthentication(isolatedConfig);
+
+    //var logger = app.Services.GetRequiredService<ILogger<CloudAdapter>>();
+    //var adapter = new CloudAdapter(auth, logger);
+
+    adapterMap[agent.Name] = adapter;
+
+    //botTypeMap[agent.Name] = typeof(EndpointAgentBot);     
+}
 
 // Domain services
-builder.Services.AddSingleton<IMultiAgentRouter, MultiAgentRouter>(); 
-builder.Services.AddSingleton<IProcessExecutor2, ProcessExecutor2>();
+//builder.Services.AddSingleton<IMultiAgentRouter, MultiAgentRouter>(); 
+//builder.Services.AddSingleton<IProcessExecutor2, ProcessExecutor2>();
 
 // Bot Framework auth (Azure Bot Service)
-builder.Services.AddSingleton<BotFrameworkAuthentication>(sp =>
-{
-    var config = sp.GetRequiredService<IConfiguration>();
-    return new ConfigurationBotFrameworkAuthentication(config);
-});
+//builder.Services.AddSingleton<BotFrameworkAuthentication>(sp =>
+//{
+//    var config = sp.GetRequiredService<IConfiguration>();
+//    return new ConfigurationBotFrameworkAuthentication(config);
+//});
 
 //builder.Services.AddSingleton<BotFrameworkAuthentication>(sp =>
 //{
@@ -67,21 +115,20 @@ builder.Services.AddSingleton<BotFrameworkAuthentication>(sp =>
 //});
 
 // Adapter
-builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(sp =>
-{
-    var auth = sp.GetRequiredService<BotFrameworkAuthentication>();
-    var logger = sp.GetRequiredService<ILogger<CloudAdapter>>();
-    return new CloudAdapter(auth, logger);
-});
+//builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(sp =>
+//{
+//    var auth = sp.GetRequiredService<BotFrameworkAuthentication>();
+//    var logger = sp.GetRequiredService<ILogger<CloudAdapter>>();
+//    return new CloudAdapter(auth, logger);
+//});
 
 // Bot
-builder.Services.AddTransient<IBot, GenericAgentBot>();
+//builder.Services.AddTransient<IBot, GenericAgentBot>();
+
+#endregion
 
 #endif
 
-builder.Services.AddControllers();
-
-var app = builder.Build();
 
 // Enable AspNet authentication and authorization
 app.UseAuthentication();
@@ -100,16 +147,44 @@ var incomingRoute = app.MapPost("/api/messages",
 
 #elif TEAMS
 
-var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IBotFrameworkHttpAdapter adapter, IBot bot) => 
-{ 
-    await adapter.ProcessAsync(request, response, bot); 
-});
+#region single route for multiple agents
+
+//var incomingRoute = app.MapPost("/api/messages", async (HttpRequest request, HttpResponse response, IBotFrameworkHttpAdapter adapter, IBot bot) => 
+//{ 
+//    await adapter.ProcessAsync(request, response, bot); 
+//});
+
+#endregion
+
+// Map endpoints AFTER app is built
+foreach (var agent in agents)
+{
+    var route = $"/api/messages/{agent.Name.ToLower()}";
+
+    //app.MapPost(route,
+    //    async (HttpRequest req, HttpResponse res,
+    //           CloudAdapter adapter, IBot bot) =>
+    //    {
+    //        await adapter.ProcessAsync(req, res, bot);
+    //    });
+
+    app.MapPost(route, async (HttpRequest req, HttpResponse res) =>
+    {
+        var adapter = adapterMap[agent.Name];
+        //var botFactory = sp.GetRequiredService<Func<string, IBot>>(); 
+        //var bot = botFactory(agent.Name);
+        var bot = botFactoryMap[agent.Name]();
+
+        await adapter.ProcessAsync(req, res, bot);
+    });
+}
+
 
 #endif
 
 if (!app.Environment.IsDevelopment())
 {
-    incomingRoute.RequireAuthorization();
+    //incomingRoute.RequireAuthorization();
 }
 else
 {
