@@ -1,7 +1,7 @@
-﻿using AiLabs.TeamsAgentApp.Configuration;
+﻿using AiLabs.TeamsBotApp.Configuration;
 using Microsoft.Extensions.Options;
 
-namespace AiLabs.TeamsAgentApp.BusinessLogic;
+namespace AiLabs.TeamsBotApp.BusinessLogic;
 
 public interface IMultiAgentRouter
 {

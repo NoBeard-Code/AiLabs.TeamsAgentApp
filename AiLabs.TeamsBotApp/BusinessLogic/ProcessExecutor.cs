@@ -1,14 +1,14 @@
-﻿using AiLabs.TeamsAgentApp.Configuration;
+﻿using AiLabs.TeamsBotApp.Configuration;
 using Microsoft.Bot.Builder;
 
-namespace AiLabs.TeamsAgentApp.BusinessLogic;
+namespace AiLabs.TeamsBotApp.BusinessLogic;
 
-public interface IProcessExecutor2
+public interface IProcessExecutor
 {
     Task ExecuteAsync(AgentEntry agent, ITurnContext turnContext, CancellationToken cancellationToken);
 }
 
-public class ProcessExecutor2 : IProcessExecutor2
+public class ProcessExecutor : IProcessExecutor
 {
     public async Task ExecuteAsync(AgentEntry agent, ITurnContext turnContext, CancellationToken cancellationToken)
     {

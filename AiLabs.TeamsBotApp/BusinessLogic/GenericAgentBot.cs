@@ -1,14 +1,14 @@
 ﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
 
-namespace AiLabs.TeamsAgentApp.BusinessLogic;
+namespace AiLabs.TeamsBotApp.BusinessLogic;
 
 public class GenericAgentBot : IBot
 {
     private readonly IMultiAgentRouter _router;
-    private readonly IProcessExecutor2 _executor;
+    private readonly IProcessExecutor _executor;
 
-    public GenericAgentBot(IMultiAgentRouter router, IProcessExecutor2 executor)
+    public GenericAgentBot(IMultiAgentRouter router, IProcessExecutor executor)
     {
         _router = router;
         _executor = executor;

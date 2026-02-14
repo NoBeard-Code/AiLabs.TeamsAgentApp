@@ -1,7 +1,7 @@
 ﻿using Microsoft.Bot.Builder.Integration.AspNet.Core;
 using Microsoft.Bot.Connector.Authentication;
 
-namespace AiLabs.TeamsAgentApp.BusinessLogic;
+namespace AiLabs.TeamsBotApp.BusinessLogic;
 
 public static class AdapterFactory
 {

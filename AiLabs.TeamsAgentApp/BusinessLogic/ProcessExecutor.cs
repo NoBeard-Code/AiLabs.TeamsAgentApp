@@ -4,16 +4,16 @@ namespace AiLabs.TeamsAgentApp.BusinessLogic;
 
 public interface IProcessExecutor
 {
-    Task ExecuteAsync(ProcessDefinition process, ITurnContext turnContext, CancellationToken cancellationToken);
+    Task ExecuteAsync(string agentName, ITurnContext turnContext, CancellationToken cancellationToken);
 }
 
 public class ProcessExecutor : IProcessExecutor
 {
-    public async Task ExecuteAsync(ProcessDefinition process, ITurnContext turnContext, CancellationToken cancellationToken)
+    public async Task ExecuteAsync(string agentName, ITurnContext turnContext, CancellationToken cancellationToken)
     {
-        // Example: simple echo with process name
+        // Example: simple echo with agent name
         await turnContext.SendActivityAsync(
-            $"[{process.Name}] You said: {turnContext.Activity.Text}",
+            $"[{agentName}] You said: {turnContext.Activity.Text}",
             cancellationToken: cancellationToken);
     }
 }

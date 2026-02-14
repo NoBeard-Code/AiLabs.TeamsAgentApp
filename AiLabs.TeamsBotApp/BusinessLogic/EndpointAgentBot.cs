@@ -1,7 +1,7 @@
-﻿namespace AiLabs.TeamsAgentApp.BusinessLogic;
-
-using Microsoft.Bot.Builder;
+﻿using Microsoft.Bot.Builder;
 using Microsoft.Bot.Schema;
+
+namespace AiLabs.TeamsBotApp.BusinessLogic;
 
 public class EndpointAgentBot : IBot
 {

@@ -4,12 +4,12 @@ namespace AiLabs.TeamsAgentApp.BusinessLogic;
 
 public interface IAgentRouter
 {
-    Task<ProcessDefinition?> ResolveAsync(ITurnContext turnContext, CancellationToken cancellationToken);
+    Task<string?> ResolveAsync(ITurnContext turnContext, CancellationToken cancellationToken);
 }
 
-public class AgentRouter(IProcessRepository repo) : IAgentRouter
+public class AgentRouter : IAgentRouter
 {
-    public async Task<ProcessDefinition?> ResolveAsync(ITurnContext turnContext, CancellationToken cancellationToken)
+    public async Task<string?> ResolveAsync(ITurnContext turnContext, CancellationToken cancellationToken)
     {
         var tenantId = turnContext.Activity.Conversation.TenantId;
         var agentId = turnContext.Activity.Recipient?.Id; // Bot/App/Agent ID
@@ -20,9 +20,9 @@ public class AgentRouter(IProcessRepository repo) : IAgentRouter
         // Normalize AppId
         var agentAppId = agentId.StartsWith("28:") ? agentId.Substring(3) : agentId;
 
-        await turnContext.SendActivityAsync($"DEBUG: TenantId: {tenantId}", cancellationToken: cancellationToken);
-        await turnContext.SendActivityAsync($"DEBUG: AgentAppId: {agentAppId}", cancellationToken: cancellationToken);
+        Console.WriteLine($"DEBUG: TenantId: {tenantId}");
+        Console.WriteLine($"DEBUG: AgentAppId: {agentAppId}");
 
-        return await repo.GetProcessForTenantAgentAsync(tenantId, agentId, cancellationToken);
+        return agentAppId;
     }
 }

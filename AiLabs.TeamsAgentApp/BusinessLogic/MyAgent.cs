@@ -2,6 +2,7 @@
 using Microsoft.Agents.Builder.App;
 using Microsoft.Agents.Builder.State;
 using Microsoft.Agents.Core.Models;
+using System.Diagnostics;
 
 namespace AiLabs.TeamsAgentApp.BusinessLogic;
 
@@ -34,16 +35,16 @@ public class MyAgent : AgentApplication
     private async Task OnMessageAsync(ITurnContext turnContext, ITurnState turnState, CancellationToken cancellationToken)
     {
         // 1. Resolve tenant + agent → process
-        var process = await _router.ResolveAsync(turnContext, cancellationToken);
+        var agentId = await _router.ResolveAsync(turnContext, cancellationToken);
 
-        if (process == null) 
-        { 
-            await turnContext.SendActivityAsync("No process configured for this agent in your tenant.", cancellationToken: cancellationToken); 
-            return; 
-        } 
-       
+        if (agentId == null)
+        {
+           Console.WriteLine("No process configured for this agent in your tenant.");
+            return;
+        }
+
         // 2. Execute the process
-        await _executor.ExecuteAsync(process, turnContext, cancellationToken);
+        await _executor.ExecuteAsync(agentId, turnContext, cancellationToken);
 
         //await turnContext.SendActivityAsync($"You said: {turnContext.Activity.Text}", cancellationToken: cancellationToken);
     }
