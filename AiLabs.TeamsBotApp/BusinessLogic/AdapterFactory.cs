@@ -5,14 +5,14 @@ namespace AiLabs.TeamsBotApp.BusinessLogic;
 
 public static class AdapterFactory
 {
-    public static CloudAdapter CreateAdapter(string appId, string appPassword, string tenantId, ILogger logger)
+    public static CloudAdapter CreateAdapter(string appId, string appPassword, string tenantId, ILogger logger = null)
     {
         var config = new ConfigurationBuilder()
             .AddInMemoryCollection(new Dictionary<string, string?>
             {
+                ["MicrosoftAppType"] = "SingleTenant",
                 ["MicrosoftAppId"] = appId,
                 ["MicrosoftAppPassword"] = appPassword,
-                ["MicrosoftAppType"] = "MultiTenant",
                 ["MicrosoftAppTenantId"] = tenantId
             })
             .Build();

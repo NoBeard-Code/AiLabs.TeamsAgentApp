@@ -13,8 +13,32 @@ builder.Services.AddControllers();
 
 #if SINGLE
 
-// Bot Framework auth (Azure Bot Service)
+/*
+ 
 builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFrameworkAuthentication>();
+
+builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(sp =>
+{
+    var auth = sp.GetRequiredService<BotFrameworkAuthentication>();
+    var logger = sp.GetRequiredService<ILogger<CloudAdapter>>();
+    return new CloudAdapter(auth, logger);
+});
+
+var routePrefix = "hrgeneralist";
+builder.Services.AddTransient<IBot>(sp => new EndpointAgentBot(routePrefix));
+
+*/
+
+var agents = builder.Configuration.GetSection("Agents").Get<List<AgentEntry>>()!;
+var agent = agents.FirstOrDefault() ?? throw new InvalidOperationException("No agents configured");
+
+builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(sp =>
+{
+    return AdapterFactory.CreateAdapter(agent.AppId, agent.ClientSecret, agent.TenantId);
+});
+
+builder.Services.AddTransient<IBot>(sp => new EndpointAgentBot(agent.Name));
+
 //builder.Services.AddSingleton<BotFrameworkAuthentication>(sp =>
 //{
 //    var config = sp.GetRequiredService<IConfiguration>();
@@ -34,20 +58,6 @@ builder.Services.AddSingleton<BotFrameworkAuthentication, ConfigurationBotFramew
 
 //    return new ConfigurationBotFrameworkAuthentication(config, authConfiguration: authConfig);
 //});
-
-// Adapter
-builder.Services.AddSingleton<IBotFrameworkHttpAdapter>(sp =>
-{
-    var auth = sp.GetRequiredService<BotFrameworkAuthentication>();
-    var logger = sp.GetRequiredService<ILogger<CloudAdapter>>();
-    return new CloudAdapter(auth, logger);
-});
-
-var routePrefix = "hrgeneralist";
-
-// Bot
-//builder.Services.AddTransient<IBot, GenericAgentBot>();
-builder.Services.AddTransient<IBot>(sp => new EndpointAgentBot(routePrefix));
 
 var app = builder.Build();
 
@@ -111,7 +121,8 @@ app.UseAuthorization();
 
 #if SINGLE
 
-var incomingRoute = app.MapPost($"/{routePrefix}/api/messages", async (HttpRequest request, HttpResponse response, IBotFrameworkHttpAdapter adapter, IBot bot) =>
+var incomingRoute = app.MapPost($"/{agent.Name}/api/messages", 
+    async (HttpRequest request, HttpResponse response, IBotFrameworkHttpAdapter adapter, IBot bot) =>
 {
     await adapter.ProcessAsync(request, response, bot);
 });
