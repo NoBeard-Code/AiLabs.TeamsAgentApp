@@ -38,10 +38,6 @@ builder.Services.AddTransient<IBot>(sp => new EndpointAgentBot(routePrefix));
 
 // MULTI AGENT CONFIGURATION:
 
-// Domain services
-builder.Services.AddSingleton<IMultiAgentRouter, MultiAgentRouter>();
-builder.Services.AddSingleton<IProcessExecutor, ProcessExecutor>();
-
 //builder.Services.Configure<AgentsOptions>(builder.Configuration.GetSection("Agents"));
 
 var agents = builder.Configuration.GetSection("Agents").Get<List<AgentEntry>>()!;
