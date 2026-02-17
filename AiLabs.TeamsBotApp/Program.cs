@@ -44,7 +44,7 @@ var agents = builder.Configuration.GetSection("Agents").Get<List<AgentEntry>>()!
 
 foreach (var agent in agents)
 {
-    IBotFrameworkHttpAdapter keyedAdapter = AdapterFactory.CreateAdapter(agent.AppId, agent.ClientSecret, agent.TenantId);
+    IBotFrameworkHttpAdapter keyedAdapter = AdapterFactory.CreateAdapter(agent.AppId, agent.ClientSecret, agent.TenantId, agent.AppType);
     builder.Services.AddKeyedSingleton<IBotFrameworkHttpAdapter>(agent.Name, keyedAdapter);
 
     IBot keyedBot = new EndpointAgentBot(agent.Name);
