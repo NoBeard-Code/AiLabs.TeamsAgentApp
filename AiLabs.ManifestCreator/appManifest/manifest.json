@@ -1,0 +1,55 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.22/MicrosoftTeams.schema.json",
+  "manifestVersion": "1.22",
+  "version": "{VERSION}",
+  "id": "{APP_ID}",
+  "developer": {
+    "name": "{COMPANY_NAME}",
+    "websiteUrl": "{COMPANY_URL}",
+    "privacyUrl": "{COMPANY_URL}/privacy",
+    "termsOfUseUrl": "{COMPANY_URL}/termsofuse"
+  },
+  "icons": {
+    "color": "color.png",
+    "outline": "outline.png"
+  },
+  "name": {
+    "short": "{BOT_NAME}",
+    "full": "{BOT_NAME}"
+  },
+  "description": {
+    "short": "{BOT_NAME}",
+    "full": "{BOT_NAME}"
+  },
+  "accentColor": "#FFFFFF",
+  "bots": [
+    {
+      "botId": "{BOT_ID}",
+      "scopes": [
+        "personal",
+        "team",
+        "groupChat",
+        "copilot"
+      ],
+      "isNotificationOnly": false,
+      "supportsCalling": false,
+      "supportsVideo": false,
+      "supportsFiles": false
+    }
+  ],
+  "copilotAgents": {
+    "customEngineAgents": [
+      {
+        "type": "bot",
+        "id": "{BOT_ID}"
+      }
+    ]
+  },
+  "permissions": [
+    "identity",
+    "messageTeamMembers"
+  ],
+  "validDomains": [
+    "{BACKEND_URL}"
+  ]
+}

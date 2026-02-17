@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="AiLabs.ManifestCreator/AiLabs.ManifestCreator.csproj" Id="e4cb2bb5-a89f-48b3-a703-031bed408f64" />
   <Project Path="AiLabs.TeamsAgentApp/AiLabs.TeamsAgentApp.csproj" />
   <Project Path="AiLabs.TeamsBotApp/AiLabs.TeamsBotApp.csproj" Id="068d3f8f-a394-4f31-abfc-6806a05cad6d" />
 </Solution>
