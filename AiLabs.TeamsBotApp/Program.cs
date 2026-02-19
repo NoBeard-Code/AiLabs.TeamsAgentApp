@@ -2,6 +2,7 @@
 using AiLabs.TeamsBotApp.Configuration;
 using Microsoft.Bot.Builder;
 using Microsoft.Bot.Builder.Integration.AspNet.Core;
+using Microsoft.Bot.Builder.Teams;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,9 +48,11 @@ foreach (var agent in agents)
     IBotFrameworkHttpAdapter keyedAdapter = AdapterFactory.CreateAdapter(agent.AppId, agent.ClientSecret, agent.TenantId, agent.AppType);
     builder.Services.AddKeyedSingleton<IBotFrameworkHttpAdapter>(agent.Name, keyedAdapter);
 
-    IBot keyedBot = new EndpointAgentBot(agent.Name);
-    builder.Services.AddKeyedTransient<IBot>(agent.Name, (sp, obj) => new EndpointAgentBot(agent.Name));
+    TeamsActivityHandler keyedBot = new EndpointAgentBot(agent.Name);
+    builder.Services.AddKeyedTransient<TeamsActivityHandler>(agent.Name, (sp, obj) => new EndpointAgentBot(agent.Name));
 }
+
+builder.Services.AddSingleton<IMultiAgentRouter, MultiAgentRouter>();
 
 var app = builder.Build();
 
@@ -93,6 +96,18 @@ foreach (var agent in agents)
         incomingRoute.RequireAuthorization();
     }
 }
+
+
+var multiRoute = app.MapPost($"/api/messages",
+    async (HttpRequest request, HttpResponse response, IMultiAgentRouter router) =>
+{
+    //var agent = router.GetAgent(request.Headers["TenantId"], request.Headers["AppId"]);    
+    var agentName = "DevOpsEngineer";
+    var adapter = app.Services.GetRequiredKeyedService<IBotFrameworkHttpAdapter>(agentName);
+    var bot = app.Services.GetRequiredKeyedService<TeamsActivityHandler>(agentName);
+    await adapter.ProcessAsync(request, response, bot);
+});
+
 
 if (app.Environment.IsDevelopment())
 {
