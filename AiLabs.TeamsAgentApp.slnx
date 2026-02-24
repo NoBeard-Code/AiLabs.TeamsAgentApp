@@ -1,5 +1,7 @@
 <Solution>
   <Project Path="AiLabs.ManifestCreator/AiLabs.ManifestCreator.csproj" Id="e4cb2bb5-a89f-48b3-a703-031bed408f64" />
+  <Project Path="AiLabs.MsTeamsAdapter/AiLabs.MsTeamsAdapter.csproj" Id="828fc22a-2d29-4481-913c-018bbf71f09d" />
+  <Project Path="AiLabs.Repository/AiLabs.Repository.csproj" Id="1e97a8a2-23d6-4c50-9597-ec654d067725" />
   <Project Path="AiLabs.TeamsAgentApp/AiLabs.TeamsAgentApp.csproj" />
   <Project Path="AiLabs.TeamsBotApp/AiLabs.TeamsBotApp.csproj" Id="068d3f8f-a394-4f31-abfc-6806a05cad6d" />
 </Solution>

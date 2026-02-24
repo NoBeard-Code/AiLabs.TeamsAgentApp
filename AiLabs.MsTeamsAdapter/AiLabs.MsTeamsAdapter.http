@@ -1,0 +1,6 @@
+@AiLabs.MsTeamsAdapter_HostAddress = http://localhost:5009
+
+GET {{AiLabs.MsTeamsAdapter_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

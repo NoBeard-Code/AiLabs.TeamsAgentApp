@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\AiLabs.Repository\AiLabs.Repository.csproj" />
+  </ItemGroup>
+	
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Bot.Builder" Version="4.23.1" />
+		<PackageReference Include="Microsoft.Bot.Builder.Integration.AspNet.Core" Version="4.23.1" />
+		<PackageReference Include="Microsoft.Bot.Connector" Version="4.23.1" />
+		<PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="10.0.2" />
+		<PackageReference Include="Microsoft.Teams.AI" Version="2.0.5" />
+	</ItemGroup>
+
+</Project>
